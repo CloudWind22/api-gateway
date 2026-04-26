@@ -2,7 +2,6 @@
 from fastapi import APIRouter, Request, Body, Response
 from app.services.proxy import forward_request
 from app.core.logger import logger
-from app.core.auth import verify_token
 
 router = APIRouter()
 
@@ -22,31 +21,20 @@ async def getway(service_name: str,
         #记录日志
         logger.info(f"[Request] {client_ip} {request.method}/{service_name}/{path}")
 
-        #鉴权
-        auth_header = request.headers.get("authorization")
-
-        if not auth_header or not auth_header.startswith("Bearer "):
-            return Response(
+       #鉴权已在外部完成
+        user = getattr(request.state, "user", None)
+        if not user:
+              return Response(
                     content = b"Unauthorized",
                     status_code = 401
-            )
-
-        token = auth_header.split(' ')[1]
-
-        user = verify_token(token)
-
-        if not user:
-             return Response(
-                  content = b"Invalid Token",
-                  status_code = 401
-             )
+              )
 
         #匹配路由
         base_url = SERVICE_MAP.get(service_name)
 
         if not base_url:
             return Response(
-                 content = b"serivce not found",
+                 content = b"service not found",
                  status_code = 404
                 )
         
