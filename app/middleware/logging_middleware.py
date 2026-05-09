@@ -5,7 +5,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi import FastAPI, Request
 from app.core.logger import logger
 
-class LoginMiddleWare(BaseHTTPMiddleware):
+class LoggingMiddleWare(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         #记录时间
         start = time.time()

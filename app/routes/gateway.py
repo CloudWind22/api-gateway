@@ -52,7 +52,7 @@ async def getway(service_name: str,
 
         raw_body = await request.body()
 
-        result = await forward_request(method, url, headers, raw_body)
+        result = await forward_request(service_name, method, url, headers, raw_body)
 
         #过滤响应报文的header
         response_headers = {
